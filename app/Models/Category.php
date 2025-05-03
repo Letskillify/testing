@@ -2,33 +2,35 @@
 
 namespace App\Models;
 
+use App\Models\Section;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class Category extends Model
-{
+class Category extends Model {
     use HasFactory;
 
-    protected $fillable = ['name', 'slug', 'parent_id'];
+    protected $fillable = [
+        'name',
+        'slug',
+        'section_id',
+        'image',
+    ];
 
-    // Relationships
-    public function products()
-    {
+    public function section(): BelongsTo {
+        return $this->belongsTo(Section::class);
+    }
+
+    public function offer(): BelongsTo {
+        return $this->belongsTo(Offer::class);
+    }
+
+    public function subCategory(): HasMany {
+        return $this->hasMany(SubCategory::class);
+    }
+
+    public function product(): HasMany {
         return $this->hasMany(Product::class);
-    }
-
-    public function subCategories()
-    {
-        return $this->hasMany(SubCategory::class, 'category_id');
-    }
-
-    public function parent()
-    {
-        return $this->belongsTo(self::class, 'parent_id');
-    }
-
-    public function children()
-    {
-        return $this->hasMany(self::class, 'parent_id');
     }
 }

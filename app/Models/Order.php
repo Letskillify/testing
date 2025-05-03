@@ -4,6 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Order extends Model
 {
@@ -27,29 +30,29 @@ class Order extends Model
         'shipping_address' => 'array',
         'billing_address'  => 'array'
     ];
-    // Relationships
-    public function user()
+
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
-    public function orderItems()
+    public function coupon(): BelongsTo
+    {
+        return $this->belongsTo(Coupon::class);
+    }
+
+    public function orderItem(): HasMany
     {
         return $this->hasMany(OrderItem::class);
     }
 
-    public function shippingMethod()
+    public function userPayment(): HasOne
     {
-        return $this->belongsTo(ShippingMethod::class, 'shipping_method_id');
+        return $this->hasOne(UserPayment::class);
     }
 
-    public function paymentType()
+    public function shippingMethod(): BelongsTo
     {
-        return $this->belongsTo(PaymentType::class, 'payment_type_id');
-    }
-
-    public function coupon()
-    {
-        return $this->belongsTo(Coupon::class, 'coupon_id');
+        return $this->belongsTo(ShippingMethod::class);
     }
 }

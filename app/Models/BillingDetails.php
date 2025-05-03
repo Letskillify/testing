@@ -4,8 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class BillingDetail extends Model
+class BillingDetails extends Model
 {
     use HasFactory;
 
@@ -24,7 +25,7 @@ class BillingDetail extends Model
         'email',
     ];
 
-    public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }

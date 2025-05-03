@@ -2,19 +2,21 @@
 
 namespace App\Models;
 
+// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
-class User extends Authenticatable
-{
+class User extends Authenticatable {
     use HasApiTokens, HasFactory, Notifiable;
 
     /**
      * The attributes that are mass assignable.
      *
-     * @var array<string>
+     * @var array<int, string>
      */
     protected $fillable = [
         'name',
@@ -41,40 +43,19 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
-    // Relationships
+    public function billingDetail(): HasOne {
+        return $this->hasOne(BillingDetails::class);
+    }
 
-    public function orders()
-    {
+    public function shipToDifferentAddress(): HasOne {
+        return $this->hasOne(ShipToDifferentAddress::class);
+    }
+
+    public function order(): HasMany {
         return $this->hasMany(Order::class);
     }
 
-    public function reviews()
-    {
+    public function review(): HasMany {
         return $this->hasMany(Review::class);
-    }
-
-    public function carts()
-    {
-        return $this->hasMany(Cart::class);
-    }
-
-    public function billingDetails()
-    {
-        return $this->hasOne(BillingDetail::class);
-    }
-
-    public function payments()
-    {
-        return $this->hasMany(UserPayment::class);
-    }
-
-    public function comments()
-    {
-        return $this->hasMany(Comment::class, 'user_id');
-    }
-
-    public function commentReplies()
-    {
-        return $this->hasMany(CommentReply::class, 'user_id');
     }
 }

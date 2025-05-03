@@ -1,34 +1,26 @@
 <?php
 
+use App\Http\Controllers\Api\BrandController;
+use App\Http\Controllers\Api\CategoryController;
+use App\Http\Controllers\Api\CompareController;
+use App\Http\Controllers\Api\ContactController;
+use App\Http\Controllers\Api\HomeController;
+use App\Http\Controllers\Api\Layouts\SettingsController;
+use App\Http\Controllers\Api\Layouts\SidebarController;
+use App\Http\Controllers\Api\OfferController;
+use App\Http\Controllers\Api\ProductController;
+use App\Http\Controllers\Api\ReviewController;
+use App\Http\Controllers\Api\SearchController;
+use App\Http\Controllers\Api\ShopController;
+use App\Http\Controllers\Api\SubCategoryController;
+use App\Http\Controllers\Api\TopSaleController;
+use App\Http\Controllers\Api\Users\CartController;
+use App\Http\Controllers\Api\Users\CheckoutController;
+use App\Http\Controllers\Api\Users\OrderController;
+use App\Http\Controllers\Api\Users\OrderItemController;
+use App\Http\Controllers\Api\Users\UserController;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\EditorController;
-use App\Http\Controllers\AttributeController;
-use App\Http\Controllers\AttributeOptionController;
-use App\Http\Controllers\SectionController;
-use App\Http\Controllers\OfferController;
-use App\Http\Controllers\CategoryController;
-use App\Http\Controllers\SubCategoryController;
-use App\Http\Controllers\BrandController;
-use App\Http\Controllers\ProductController;
-use App\Http\Controllers\CartController;
-use App\Http\Controllers\CartItemController;
-use App\Http\Controllers\CouponController;
-use App\Http\Controllers\ShippingMethodController;
-use App\Http\Controllers\OrderController;
-use App\Http\Controllers\OrderItemController;
-use App\Http\Controllers\PaymentTypeController;
-use App\Http\Controllers\ReviewController;
-use App\Http\Controllers\ContactUsController;
-use App\Http\Controllers\GeneralSettingController;
-use App\Http\Controllers\SearchedKeywordController;
-use App\Http\Controllers\TagController;
-use App\Http\Controllers\ProductViewController;
-use App\Http\Controllers\ProductAttributeController;
-use App\Http\Controllers\CommentController;
-use App\Http\Controllers\BillingDetailController;
-use App\Http\Controllers\RevenueFromPurchaseAndSaleOfProductController;
-use App\Http\Controllers\CommentReplyController;
-use App\Http\Controllers\UserPaymentController;
 
 /*
 |--------------------------------------------------------------------------
@@ -36,105 +28,94 @@ use App\Http\Controllers\UserPaymentController;
 |--------------------------------------------------------------------------
 |
 | Here is where you can register API routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| is assigned the "api" middleware group. Enjoy building your API!
+| routes are loaded by the RouteServiceProvider and all of them will
+| be assigned to the "api" middleware group. Make something great!
 |
-*/
+ */
 
-// Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-//     return $request->user();
-// });
 
-//  ========================
-//  Admin Routes
-//  ========================
-Route::prefix('admin')->group(function () {
-    //  Editors
-    Route::apiResource('editors', App\Http\Controllers\EditorController::class);
+Route::name('api.')->group(function () {
 
-    //  Attributes
-    Route::apiResource('attributes', App\Http\Controllers\AttributeController::class);
+    Route::prefix('/home')->name('home.')->group(function () {
 
-    //  Attribute Options
-    Route::apiResource('attribute-options', App\Http\Controllers\AttributeOptionController::class);
+        Route::get('/', [HomeController::class, 'index']);
 
-    //  Sections
-    Route::apiResource('sections', App\Http\Controllers\SectionController::class);
+        Route::get('/offers', [HomeController::class, 'getOffer'])->name('offers');
 
-    // Offers
-    Route::apiResource('offers', App\Http\Controllers\OfferController::class);
-});
+        Route::get('/categories', [HomeController::class, 'getCategory'])->name('categories');
 
-// ========================
-//  Frontend Routes
-//  ========================
-Route::prefix('front')->group(function () {
-    // Categories
-    Route::apiResource('categories', App\Http\Controllers\CategoryController::class);
+        Route::get('/navbar', [HomeController::class, 'getNavbar'])->name('navbar');
+    });
 
-    // Sub-Categories
-    Route::apiResource('subcategories', App\Http\Controllers\SubCategoryController::class);
+    Route::get('/site-settings', SettingsController::class)->name('settings');
 
-    // Brands
-    Route::apiResource('brands', App\Http\Controllers\BrandController::class);
+    Route::get('/sidebar', [SidebarController::class, 'index'])->name('sidebar');
 
-    // Products
-    Route::apiResource('products', App\Http\Controllers\ProductController::class);
+    Route::post('/contacts', ContactController::class)->name('contacts');
 
-    // Carts
-    Route::apiResource('carts', App\Http\Controllers\CartController::class);
+    Route::post('/compare', CompareController::class)->name('compare');
 
-    // Cart Items
-    Route::apiResource('cart-items', App\Http\Controllers\CartItemController::class);
+    Route::get('/search/{keyword}', [SearchController::class, 'index'])->name('search')->where('keyword', '[A-Za-z0-1]+');
 
-    // Coupons
-    Route::apiResource('coupons', App\Http\Controllers\CouponController::class);
+    Route::get('/shop', ShopController::class)->name('shop');
 
-    // Shipping Methods
-    Route::apiResource('shipping-methods', App\Http\Controllers\ShippingMethodController::class);
+    Route::get('/categories/{slug}', CategoryController::class)->name('categories');
 
-    // Orders
-    Route::apiResource('orders', App\Http\Controllers\OrderController::class);
+    Route::get('/sub-categories/{slug}', SubCategoryController::class)->name('subCategories');
 
-    // Order Items
-    Route::apiResource('order-items', App\Http\Controllers\OrderItemController::class);
+    Route::get('/brands/{slug}', BrandController::class)->name('brands');
 
-    // Payment Types
-    Route::apiResource('payment-types', App\Http\Controllers\PaymentTypeController::class);
+    Route::get('/offers/{slug}', OfferController::class)->name('offers');
 
-    // Reviews
-    Route::apiResource('reviews', App\Http\Controllers\ReviewController::class);
+    Route::get('/sales', TopSaleController::class)->name('sales');
 
-    // Contact Us
-    Route::post('contact-us', [App\Http\Controllers\ContactUsController::class, 'store']);
+    Route::get('/products/{slug}', [ProductController::class, 'index'])->name('products.show');
 
-    // General Settings
-    Route::get('general-settings', [App\Http\Controllers\GeneralSettingController::class, 'index']);
+    Route::get('/products/view-count/{id}', [ProductController::class, 'productViewCount'])->name('products.viewCount')->whereNumber('id');
 
-    // Searched Keywords
-    Route::get('searched-keywords', [App\Http\Controllers\SearchedKeywordController::class, 'index']);
+    Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+        return $request->user();
+    });
 
-    // Tags
-    Route::apiResource('tags', App\Http\Controllers\TagController::class);
+    Route::middleware('auth:sanctum')->prefix('/users')->name('users.')->group(function () {
 
-    // Product Views
-    Route::post('product-views/{product}', [App\Http\Controllers\ProductViewController::class, 'store']);
+        Route::prefix('/cart')->name('cart.')->group(function () {
 
-     // Product Attributes
-    Route::get('product-attributes/{product}', [App\Http\Controllers\ProductAttributeController::class, 'index']);
+            Route::get('/{id}', [CartController::class, 'inbox'])->whereNumber('id');
 
-    // Comments
-    Route::apiResource('comments', App\Http\Controllers\CommentController::class);
+            Route::delete('/{id}', [CartController::class, 'destroy'])->name('destroy')->whereNumber('id');
 
-    // Billing Details
-    Route::apiResource('billing-details', App\Http\Controllers\BillingDetailController::class);
+            Route::get('/{cartId}/{productId}/{qty}', [CartController::class, 'update'])->name('update')->where(['cartId' => '[0-9]+', 'productId' => '[0-9]+', 'qty' => '[0-9]+']);
 
-    // Revenue from Purchase and Sale of Products
-    Route::get('revenue', [App\Http\Controllers\RevenueFromPurchaseAndSaleOfProductController::class, 'index']);
+            Route::get('/count/{userId}', [CartController::class, 'count'])->name('count')->whereNumber('userId');
 
-    // Comment Replies
-    Route::apiResource('comment-replies', App\Http\Controllers\CommentReplyController::class);
+            Route::get('/coupon/{code}', [CartController::class, 'getCoupon'])->name('coupon')->where('code', '[A-Za-z0-1]+');
 
-    // User Payments
-    Route::apiResource('user-payments', App\Http\Controllers\UserPaymentController::class);
+            Route::get('/add/{userId}/{productId}', [CartController::class, 'add'])->name('add')->where(['userId' => '[0-9]+', 'productId' => '[0-9]+']);
+        });
+
+        Route::post('/review', [ReviewController::class, 'store'])->name('review');
+
+        Route::get('/checkout/{id}', [CheckoutController::class, 'inbox'])->name('checkout.inbox')->whereNumber('id');
+
+        Route::post('/checkout/{id}', [CheckoutController::class, 'placeOrder'])->name('checkout.placeOrder')->whereNumber('id');
+
+        Route::prefix('orders')->name('orders.')->group(function () {
+
+            Route::get('/{id}', OrderController::class)->whereNumber('id');
+
+            Route::get('/{id}/items', OrderItemController::class)->name('items')->whereNumber('id');
+
+            Route::get('/{id}/pay', [CheckoutController::class, 'payOrder'])->name('pay')->whereNumber('id');
+        });
+
+        Route::prefix('profiles')->name('profiles.')->group(function () {
+
+            Route::get('/{id}', [UserController::class, 'index'])->whereNumber('id');
+
+            Route::put('/{id}', [UserController::class, 'update'])->name('update')->whereNumber('id');
+
+            Route::post('/create', [UserController::class, 'create'])->name('create');
+        });
+    });
 });

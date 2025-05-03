@@ -4,9 +4,10 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class ShippingMethod extends Model
-{
+class ShippingMethod extends Model {
     use HasFactory;
 
     protected $fillable = [
@@ -16,8 +17,7 @@ class ShippingMethod extends Model
         'is_active',
     ];
 
-     public function orders()
-    {
+    public function order(): HasMany {
         return $this->hasMany(Order::class);
     }
 }

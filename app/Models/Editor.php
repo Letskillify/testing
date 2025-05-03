@@ -2,12 +2,41 @@
 
 namespace App\Models;
 
+use App\Models\Section;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
 
-class Editor extends Model
-{
-    use HasFactory;
+class Editor extends Authenticatable {
+    use HasFactory, Notifiable;
 
-    protected $fillable = ['name'];
+    protected $guard = 'editor';
+
+    protected $fillable = [
+        'name', 'email', 'password', 'role', 'is_active', 'last_login',
+    ];
+
+    /**
+     * The attributes that should be hidden for serialization.
+     *
+     * @var array<int, string>
+     */
+    protected $hidden = [
+        'password', 'is_active',
+    ];
+
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array<string, string>
+     */
+    protected $casts = [
+        'password' => 'hashed',
+    ];
+
+    public function contactUs(): HasMany {
+        return $this->hasMany(ContactUs::class);
+    }
 }

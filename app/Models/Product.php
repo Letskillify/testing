@@ -4,9 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
-class Product extends Model
-{
+class Product extends Model {
     use HasFactory;
 
     protected $fillable = [
@@ -69,49 +71,43 @@ class Product extends Model
         'flavor_profile' => 'array'
     ];
 
-    // Relationships
-    public function category()
-    {
-        return $this->belongsTo(Category::class);
-    }
-
-    public function subCategory()
-    {
+    public function subCategory(): BelongsTo {
         return $this->belongsTo(SubCategory::class);
     }
 
-    public function brand()
-    {
+    public function category(): BelongsTo {
+        return $this->belongsTo(Category::class);
+    }
+
+    public function brand(): BelongsTo {
         return $this->belongsTo(Brand::class);
     }
 
-    public function cartItems()
-    {
-        return $this->hasMany(CartItem::class);
+    public function offer(): BelongsTo {
+        return $this->belongsTo(Offer::class);
     }
 
-    public function orderItems()
-    {
-        return $this->hasMany(OrderItem::class);
-    }
-
-     public function reviews()
-    {
-        return $this->hasMany(Review::class);
-    }
-
-    public function productAttributes()
-    {
+    public function productAttribute(): HasMany {
         return $this->hasMany(ProductAttribute::class);
     }
 
-    public function views()
-    {
-        return $this->hasMany(ProductView::class);
+    public function revenueFromPurchaseAndSaleOfProduct(): HasOne {
+        return $this->hasOne(RevenueFromPurchaseAndSaleOfProduct::class);
     }
 
-    public function comments()
-    {
-        return $this->morphMany(Comment::class, 'commentable');
+    public function productView(): HasOne {
+        return $this->hasOne(ProductView::class);
+    }
+
+    public function discountPrice(): HasOne {
+        return $this->hasOne(DiscountPrice::class);
+    }
+
+    public function review(): HasMany {
+        return $this->hasMany(Review::class);
+    }
+
+    public function cartItem(): HasMany {
+        return $this->hasMany(CartItem::class);
     }
 }
